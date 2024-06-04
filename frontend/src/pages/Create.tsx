@@ -1,46 +1,53 @@
 import axios from "axios";
-import { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+interface FormState {
+  title: string;
+  link: string;
+  description: string;
+}
 
 function Create() {
   const navigate = useNavigate();
 
- const [form, setForm] = useState({
-  title: "",
-  link: "",
-  description: "",
+  const [form, setForm] = useState<FormState>({
+    title: "",
+    link: "",
+    description: "",
   });
 
-  const handleChange = (e) => {
-    setForm((prev) => {
-      return {
-        ...prev,
-        [e.target.id]: e.target.value,
-      };
-    });
-  }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/anime`, form)
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-
-    setForm({
-      title: "",
-      link: "",
-      description: "",
-    });
-
-    navigate("/");
+      .post(`${process.env.REACT_APP_API_URL}/api/anime`, form)
+      .then((res) => {
+        console.log(res.data);
+        setForm({
+          title: "",
+          link: "",
+          description: "",
+        });
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <main className="container">
       <div className="form_area">
-      <h1 className="title">Share Anime</h1>
+        <h1 className="title">Share Anime</h1>
         <form onSubmit={handleSubmit} className="form">
           <div className="form_group">
             <label htmlFor="title" className="sub_title">
@@ -82,7 +89,9 @@ function Create() {
             />
           </div>
           <div>
-            <button className="btn">Submit</button>
+            <button type="submit" className="btn">
+              Submit
+            </button>
           </div>
         </form>
       </div>

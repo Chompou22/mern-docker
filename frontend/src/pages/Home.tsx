@@ -1,18 +1,27 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import dotenv from "dotenv";
+import React, { useEffect, useState } from "react";
+
+dotenv.config();
+
+interface Anime {
+  _id: string;
+  title: string;
+  description: string;
+  link: string;
+}
 
 function Home() {
-  const [anime, setAnime] = useState([]);
+  const [anime, setAnime] = useState<Anime[]>([]);
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/anime`)
+      .get<Anime[]>(`${process.env.REACT_APP_API_URL as string}/api/anime`)
       .then((res) => {
         setAnime(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error fetching anime:", err);
       });
   }, []);
 
@@ -22,7 +31,7 @@ function Home() {
       <p className="sub_heading">List of anime to watch</p>
 
       <ul className="anim_list">
-        {anime.length > 0 &&
+        {anime.length > 0 ? (
           anime.map((anim) => (
             <li key={anim._id} className="anime_card">
               <div className="anime_info">
@@ -31,17 +40,21 @@ function Home() {
               </div>
 
               <div className="anime_link">
-                <Link to={anim.link} target="_blank" className="link">
+                <a
+                  href={anim.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link"
+                >
                   Watch
-                </Link>
+                </a>
               </div>
             </li>
-          ))}
+          ))
+        ) : (
+          <p className="no_result">Oops, No anime available</p>
+        )}
       </ul>
-
-      {anime.length === 0 && (
-        <p className="no_result">Oops, No anime available</p>
-      )}
     </main>
   );
 }

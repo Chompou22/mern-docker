@@ -1,9 +1,8 @@
+import React from "react";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
-
+import "./App.css";
 import Create from "./pages/Create";
 import Home from "./pages/Home";
-
-import "./App.css";
 
 function App() {
   return (
@@ -19,7 +18,7 @@ function App() {
           <Link to="/create" className="navbar_link">
             Share
           </Link>
-          <Link to="/create" className="navbar_link">
+          <Link to="/profile" className="navbar_link">
             Profile
           </Link>
         </div>
